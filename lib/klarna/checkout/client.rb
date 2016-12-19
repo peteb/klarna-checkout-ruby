@@ -103,9 +103,9 @@ module Klarna
       #
       def update_order_status(order, status)
         id = order.is_a?(String) ? order : order.id
-        path  = "/checkout/orders/#{id}"
+        path = "/checkout/orders/#{id}"
 
-        response = execute_request(path, {status: status}.to_json)
+        response = execute_request(path, {status: status})
         order.status = status unless order.is_a?(String)
 
         response
