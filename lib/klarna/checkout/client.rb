@@ -97,13 +97,32 @@ module Klarna
         end
       end
 
+      #
+      # Just a simple way to set the order's status. Can't do that with update_order;
+      # it tries to update too much.
+      #
+      def update_order_status(order, status)
+        id = order.is_a?(String) ? order : order.id
+        path  = "/checkout/orders/#{id}"
+
+        response = execute_request(path, order.to_json)
+        order.status = status unless order.is_a?(String)
+
+        response
+      end
+      
       private
 
       def write_order(order)
         path  = "/checkout/orders"
         path += "/#{order.id}" if order.id
 
-        request_body = order.to_json
+        execute_request(path, order.to_json)
+      end
+      
+      def execute_request(path, data)
+        request_body = data.to_json
+        
         response = https_connection.post do |req|
           req.url path
 
@@ -114,6 +133,7 @@ module Klarna
 
           req.body = request_body
         end
+        
         handle_status_code(response.status, response.body)
         response
       end
