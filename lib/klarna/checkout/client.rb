@@ -117,7 +117,7 @@ module Klarna
         path  = "/checkout/orders"
         path += "/#{order.id}" if order.id
 
-        execute_request(path, order.to_json)
+        execute_request(path, order)
       end
       
       def execute_request(path, data)
