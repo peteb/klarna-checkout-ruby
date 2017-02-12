@@ -46,6 +46,17 @@ module Klarna
         order.id = response.headers['Location'].split('/').last
         order
       end
+      
+      def create_recurring_order(order, recurring_token)
+        return false unless order.valid?
+
+        path  = "/checkout/recurring/#{recurring_token}/orders"
+        path += "/#{order.id}" if order.id
+
+        response = execute_recurring_request(path, order)
+
+        JSON.parse(response)
+      end
 
       def read_order(id)
         response = https_connection.get do |req|
@@ -145,14 +156,15 @@ module Klarna
           req.url path
 
           req.headers['Authorization']   = "Klarna #{sign_payload(request_body)}"
-          req.headers['Accept']          = 'application/vnd.klarna.checkout.recurring­-order-­accepted-­v1+json ',
-          req.headers['Content-Type']    = 'application/vnd.klarna.checkout.recurring-­order­-v1+json'
+          req.headers['Accept']          = 'application/vnd.klarna.checkout.recurring-order-accepted-v1+json ',
+          req.headers['Content-Type']    = 'application/vnd.klarna.checkout.recurring-order-v1+json'
           req.headers['Accept-Encoding'] = ''
 
           req.body = request_body
         end
-        
+
         handle_status_code(response.status, response.body)
+
         response
       end
 

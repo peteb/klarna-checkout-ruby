@@ -35,6 +35,7 @@ module Klarna
           :merchant => @merchant.as_json,
           :status   => status,
           :shipping_address => (@shipping_address && @shipping_address.as_json),
+          :billing_address => (@billing_address && @billing_address.as_json),
           :recurring => recurring
         })
         if id || json[:gui].nil?
