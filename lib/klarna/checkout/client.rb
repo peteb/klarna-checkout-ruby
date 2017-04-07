@@ -55,7 +55,7 @@ module Klarna
 
         response = execute_recurring_request(path, order)
 
-        JSON.parse(response)
+        JSON.parse(response.body)
       end
 
       def read_order(id)
