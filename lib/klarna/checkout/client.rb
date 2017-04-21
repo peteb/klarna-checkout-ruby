@@ -44,6 +44,8 @@ module Klarna
 
         response = write_order(order)
         order.id = response.headers['Location'].split('/').last
+        puts "Created order content: #{response.body}"
+        
         order
       end
       
@@ -54,7 +56,8 @@ module Klarna
         path += "/#{order.id}" if order.id
 
         response = execute_recurring_request(path, order)
-
+        puts "Created recurring order location: #{response.headers['Location']}"
+        
         JSON.parse(response.body)
       end
 
