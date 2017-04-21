@@ -59,6 +59,7 @@ module Klarna
         puts "Created recurring order location: #{response.headers['Location']}"
         
         JSON.parse(response.body)
+          .merge(id: response.headers['Location'].try { |loc| loc.split('/').last })
       end
 
       def read_order(id)
