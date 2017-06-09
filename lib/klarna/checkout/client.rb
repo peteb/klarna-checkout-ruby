@@ -40,16 +40,30 @@ module Klarna
       end
 
       def create_order(order)
-        return false unless order.valid?
+        if order.respond_to?(:valid?)
+          return false unless order.valid?
+        else
+          # It's a hash, add defaults
+          order = Klarna::Checkout::Order.defaults.deep_merge(order)
+        end
 
         response = write_order(order)
-        order.id = response.headers['Location'].split('/').last
         
+        unless order.respond_to?(:valid?)
+          order = Klarna::Checkout::Order.new(order)
+        end
+        
+        order.id = response.headers['Location'].split('/').last
         order
       end
       
       def create_recurring_order(order, recurring_token)
-        return false unless order.valid?
+        if order.respond_to?(:valid?)
+          return false unless order.valid?
+        else
+          # It's a hash, add defaults
+          order = Klarna::Checkout::Order.defaults.deep_merge(order)
+        end
 
         path  = "/checkout/recurring/#{recurring_token}/orders"
         path += "/#{order.id}" if order.id
@@ -74,7 +88,12 @@ module Klarna
       end
 
       def update_order(order)
-        return false unless order.valid?
+        if order.respond_to?(:valid?)
+          return false unless order.valid?
+        else
+          # It's a hash, add defaults
+          order = Klarna::Checkout::Order.defaults.deep_merge(order)
+        end
 
         response = write_order(order)
         Order.new(JSON.parse(response.body))
@@ -128,7 +147,7 @@ module Klarna
 
       def write_order(order)
         path  = "/checkout/orders"
-        path += "/#{order.id}" if order.id
+        path += "/#{order.id}" if order.respond_to?(:id) && order.id
 
         execute_request(path, order)
       end
@@ -146,7 +165,7 @@ module Klarna
 
           req.body = request_body
         end
-        
+
         handle_status_code(response.status, response.body)
         response
       end
