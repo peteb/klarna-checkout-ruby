@@ -19,7 +19,8 @@ module Klarna
       has_one :customer,            Klarna::Checkout::Customer
       has_one :merchant,            Klarna::Checkout::Merchant
       has_one :gui,                 Klarna::Checkout::Gui
-
+      has_one :options,             Klarna::Checkout::Options
+      
       validates_presence_of :purchase_country, :purchase_currency, :locale
       validate :merchant_validation
       validate :cart_validation
@@ -36,7 +37,8 @@ module Klarna
           :status   => status,
           :shipping_address => (@shipping_address && @shipping_address.as_json),
           :billing_address => (@billing_address && @billing_address.as_json),
-          :recurring => recurring
+          :recurring => recurring,
+          :options => @options.as_json
         })
         if id || json[:gui].nil?
           json.delete(:gui)
