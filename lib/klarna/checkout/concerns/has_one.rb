@@ -9,6 +9,8 @@ module HasOne
         instance_variable_set(inst_var, new_value)
       when Hash
         instance_variable_set(inst_var, klass.new(new_value))
+      when NilClass
+        instance_variable_set(inst_var, nil)
       else
         raise "Unsupported type for relation #{association}: #{new_value.class.to_s}"
       end
