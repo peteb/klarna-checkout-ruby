@@ -103,7 +103,7 @@ module Klarna
       # http://developers.klarna.com/en/api-references-v1/klarna-checkout#authorization
       def sign_payload(request_body = '')
         payload = "#{request_body}#{shared_secret}"
-        Digest::SHA256.base64digest(payload)
+        ::Digest::SHA256.base64digest(payload)
       end
 
       def handle_status_code(code, msg = nil, &blk)
